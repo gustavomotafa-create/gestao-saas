@@ -1,17 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 
 export default function Produtos() {
-  const [produtos, setProdutos] = useState([
-  { nome: "Produto 1", preco: "10" },
-  { nome: "Produto 2", preco: "20" }
-])
+ const [produtos, setProdutos] = useState<{ nome: string; preco: string }[]>([])
 
   const [nome, setNome] = useState("")
   const [preco, setPreco] = useState("")
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
+  
+useEffect(() => {
+  const produtosSalvos = localStorage.getItem("produtos")
 
+  if (produtosSalvos) {
+    setProdutos(JSON.parse(produtosSalvos))
+  }
+}, [])
+
+useEffect(() => {
+  localStorage.setItem("produtos", JSON.stringify(produtos))
+}, [produtos])
   function adicionarProduto() {
   if (editandoIndex !== null) {
     const novaLista = [...produtos]
