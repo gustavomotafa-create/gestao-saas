@@ -1,81 +1,82 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
 
 export default function Produtos() {
-  const [nome, setNome] = useState("");
-  const [preco, setPreco] = useState("");
-  const [produtos, setProdutos] = useState<any[]>([]);
+  const [produtos, setProdutos] = useState([
+  { nome: "Produto 1", preco: "10" },
+  { nome: "Produto 2", preco: "20" }
+])
 
- function cadastrarProduto() {
-  const novoProduto = {
-    nome,
-    preco
-  };
+  const [nome, setNome] = useState("")
+  const [preco, setPreco] = useState("")
+  const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
 
-  setProdutos([...produtos, novoProduto]);
+  function adicionarProduto() {
+  if (editandoIndex !== null) {
+    const novaLista = [...produtos]
+    novaLista[editandoIndex] = { nome, preco }
+    setProdutos(novaLista)
+    setEditandoIndex(null)
+  } else {
+    const novo = { nome, preco }
+    setProdutos([...produtos, novo])
+  }
 
-  setNome("");
-  setPreco("");
+  setNome("")
+  setPreco("")
 }
 
-function deletarProduto(index: number) {
-  const lista = produtos.filter((_, i) => i !== index);
-  setProdutos(lista);
-}
+  function deletarProduto(index: number) {
+    const novaLista = produtos.filter((_, i) => i !== index)
+    setProdutos(novaLista)
+  }
+
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h1>PÁGINA DE PRODUTOS 📦</h1>
+    <div style={{ marginTop: "40px" }}>
+      <h2>Lista de Produtos</h2>
 
-      <div style={{ marginTop: "20px" }}>
-        <input
-          placeholder="Nome do produto"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          style={{ padding: "10px", margin: "5px" }}
-        />
+      <input
+        placeholder="Nome"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
 
-        <input
-          placeholder="Preço"
-          value={preco}
-          onChange={(e) => setPreco(e.target.value)}
-          style={{ padding: "10px", margin: "5px" }}
-        />
+      <input
+        placeholder="Preço"
+        value={preco}
+        onChange={(e) => setPreco(e.target.value)}
+      />
 
-        <br />
+      <button onClick={adicionarProduto}>
+        Adicionar
+      </button>
 
-        <button
-          onClick={cadastrarProduto}
-          style={{
-            marginTop: "10px",
-            padding: "10px 20px",
-            cursor: "pointer"
-          }}
-        >
-          Cadastrar Produto
-        </button>
-      </div>
+      <hr />
 
-          <div style={{ marginTop: "40px" }}>
-        <h2>Lista de Produtos</h2>
+      {produtos.map((produto, index) => (
+        <div key={index} style={{ marginBottom: "10px" }}>
+          {produto.nome} - R${produto.preco}
 
-        {produtos.map((produto, index) => (
-          <div key={index} style={{ marginBottom: "10px" }}>
-            {produto.nome} - R${produto.preco}
+          <button
+            onClick={() => deletarProduto(index)}
+            style={{ marginLeft: "10px" }}
+          >
+            ❌
+          </button>
 
-            <button
-              onClick={() => deletarProduto(index)}
-              style={{
-                marginLeft: "10px",
-                padding: "5px 10px",
-                cursor: "pointer"
-              }}
-            >
-              ❌
-            </button>
-          </div>
-        ))}
-      </div>
+          <button
+  onClick={() => {
+    setNome(produto.nome)
+    setPreco(produto.preco)
+    setEditandoIndex(index)
+  }}
+  style={{ marginLeft: "10px" }}
+>
+  ✏️
+</button>
+        </div>
+      ))}
     </div>
-  );
+  )
 }
